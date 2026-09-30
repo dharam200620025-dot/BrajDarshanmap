@@ -5,12 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Braj Darshan - Smart Pilgrimage Guide</title>
     
-    <!-- Leaflet CSS & Routing CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Yatra+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- Map div -->
+<div id="map" style="width: 100%; height: 500px;"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // Map initialize karein (Jaise Mathura ka coordinates)
+  var map = L.map('map').setView([27.4924, 77.6737], 13);
+
+  // OpenStreetMap ke free tiles add karein
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+</script>
+
 
     <style>
         /* === BASE STYLES === */
@@ -347,6 +360,35 @@
         }
         function openContribute() { document.getElementById('contributeModal').style.display = 'flex'; }
         function shareAppLocation() { navigator.share ? navigator.share({url: window.location.href}) : alert("Copy link!"); }
+    </script>
+<!-- Map dikhane ke liye div -->
+    <div id="map" style="width: 100%; height: 500px;"></div>
+
+    <!-- 1. Pehle Yeh Leaflet Library ki script lagani hai -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- 2. Uske theek niche apna yeh JavaScript code likhna hai -->
+    <script>
+      // Map initialize karna
+      var map = L.map('map').setView([27.4924, 77.6737], 13);
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Search function jo location dhoondhegi
+      async function searchLocation(query) {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.length > 0) {
+          map.setView([data[0].lat, data[0].lon], 15);
+          L.marker([data[0].lat, data[0].lon]).addTo(map).bindPopup(query).openPopup();
+        } else {
+          alert("Location nahi mili!");
+        }
+      }
     </script>
 </body>
 </html>
